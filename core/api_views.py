@@ -61,6 +61,9 @@ class AccessAPIView(APIView):
         obj = get_object_or_404(Upload, pk=pk, expires_at__gt=datetime.now())
         self.check_object_permissions(request, obj)
 
+        # Increment attempt counter.
+        form.instance.successful_attempts = F("successful_attempts") + 1
+
         if obj.file:
             file_path = obj.file.path
             with open(file_path, "rb") as f_out:
