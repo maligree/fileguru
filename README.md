@@ -50,3 +50,5 @@ Nothing extra special, apart from [freezegun](https://github.com/spulec/freezegu
 ## Tests
 
 Nothing special (no pytest, no nose) just `./manage.py test`.
+
+There is a `.har` file which you should be able to import into Insomnia or any other desktop HTTP client for manual API tests. 
