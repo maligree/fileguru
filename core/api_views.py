@@ -22,6 +22,11 @@ from core.serializers import (
 class UploadAPIView(APIView):
     """
     Handles creating new Upload entries in the DB.
+
+    This endpoints accepts either an application/json request with a JSON body and a URL key,
+    or a file with the appropriate content-type set.
+
+    Return 201 on successful creation or 400 for validation errors.
     """
 
     authentication_classes = [TokenAuthentication]
