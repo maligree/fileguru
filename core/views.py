@@ -53,7 +53,7 @@ class PasswordView(UpdateView):
             return redirect(form.instance.url)
 
     def form_invalid(self, form):
-        # TODO failed access counter here
+        form.instance.failed_attempts = F("failed_attempts") + 1
         return super().form_invalid(form)
 
 
