@@ -1,0 +1,16 @@
+<div>
+  {% regroup entries by created_at__date as entries_by_day %}
+
+    {% for entry in entries_by_day %}
+    <h4>{{ entry.grouper }}</h4>
+  <ul>
+    {% for upload in entry.list %}
+    <li>Upload <a href="{% url 'upload-form' %}">{{ upload.id }}</a> &middot; accessed {{ upload.successful_attempts }} times</li>
+    {% endfor %}
+  </ul>
+
+  {% empty %}
+  <p>Nothing uploaded yet. Let's <a href="{% url 'upload-form' %}">change</a> that!</p>
+  {% endfor %}
+
+</div>

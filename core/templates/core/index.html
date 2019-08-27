@@ -1,0 +1,5 @@
+<div>
+  <h3>Hello, {{ request.user.username|default:"stranger" }}!</h3>
+  <p>Welcome tu fileguru :^)</p>
+  <p>You probably want to go straight to the <a href="{% url 'upload-form' %}">upload form</a>. There's also the <a href="{% url 'upload-summary' %}">summary</a> view, as ordered.</p>
+</div>

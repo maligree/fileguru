@@ -1,0 +1,12 @@
+{% load humanize %}
+
+<h1>Done!</h1>
+<p>
+Password for this upload is: <strong>{{ upload.password }}</strong>
+</p>
+<p>
+<a href="{% url 'upload-access' pk=upload.pk %}">{{ upload.pk }}</a>
+</p>
+<p>
+Expires {{ upload.expires_at }} which is <i>{{ upload.expires_at|naturaltime }}</i>.
+</p>
