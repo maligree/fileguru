@@ -1,5 +1,6 @@
-from core.models import Upload
 from django import forms
+
+from core.models import Upload
 
 
 class UploadForm(forms.ModelForm):

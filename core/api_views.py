@@ -1,6 +1,14 @@
 import os
 from datetime import datetime
 
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.parsers import FileUploadParser, JSONParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from core.common import UploadSummaryMixin
 from core.models import Upload
 from core.permissions import HasProperPassphrase
@@ -9,13 +17,6 @@ from core.serializers import (
     UploadSerializer,
     UploadSuccessSerializer,
 )
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.parsers import FileUploadParser, JSONParser
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 
 class UploadAPIView(APIView):
@@ -69,7 +70,7 @@ class AccessAPIView(APIView):
                 ] = "attachment; filename=" + os.path.basename(file_path)
             return response
         else:
-            return Response({ 'url': obj.url })
+            return Response({"url": obj.url})
 
 
 class SummaryAPIView(APIView, UploadSummaryMixin):

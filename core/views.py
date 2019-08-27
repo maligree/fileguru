@@ -1,9 +1,6 @@
 import os
 from datetime import datetime
 
-from core.common import UploadSummaryMixin
-from core.forms import PasswordForm, UploadForm
-from core.models import Upload
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F
 from django.http import HttpResponse
@@ -12,6 +9,10 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView
 
+from core.common import UploadSummaryMixin
+from core.forms import PasswordForm, UploadForm
+from core.models import Upload
+
 
 class IndexView(TemplateView):
     template_name = "core/index.html"
@@ -19,9 +20,7 @@ class IndexView(TemplateView):
 
 class UploadView(LoginRequiredMixin, CreateView):
     template_name = "core/upload.html"
-    # model = Upload
     form_class = UploadForm
-    # fields = ["file", "url"]
 
     def form_valid(self, form):
         form.save()

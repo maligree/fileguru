@@ -1,7 +1,8 @@
-from core.api_views import AccessAPIView, SummaryAPIView, UploadAPIView
-from core.views import IndexView, PasswordView, SummaryView, UploadView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import include, path
+
+from core.api_views import AccessAPIView, SummaryAPIView, UploadAPIView
+from core.views import IndexView, PasswordView, SummaryView, UploadView
 
 api_patterns = [
     # path('api-auth/', include('rest_framework.urls')),
