@@ -1,10 +1,12 @@
-from core.models import Upload
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http.response import HttpResponseRedirect
 from django.test import TestCase
 from django.urls import reverse
 from freezegun import freeze_time
+
+from core.models import Upload
 
 
 def create_url_upload(url):
@@ -14,10 +16,9 @@ def create_url_upload(url):
     return upload
 
 
-def create_file_upload(url):
-    # TODO
+def create_file_upload():
     upload = Upload()
-    upload.url = url
+    upload.file = SimpleUploadedFile("testfile.txt", "hello world".encode("ascii"))
     upload.save()
     return upload
 
@@ -58,19 +59,43 @@ class UploadViewTests(TestCase):
 
         self.assertContains(response, "Password")
 
-    def test_upload_creates_db_entry_properly(self):
+    def test_url_upload_creates_db_entry_properly(self):
         """
         Submit a form to the /upload endpoint and check if DB is properly populated.
         """
 
         self.client.force_login(self.test_user)
         response = self.client.post(
-            reverse("upload-form"), {"url": "https://fb.com/robots.txt"}
+            reverse("upload-form"),
+            {"upload_type": "url_upload", "url": "https://fb.com/robots.txt"},
         )
         upload_obj = response.context["upload"]
-
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Password")
+        self.assertContains(
+            response, "Password"
+        )  # This implicitly checks for HTTP 200, BTW...
+
+        # Ensure rendered form contains the generated password.
+        self.assertContains(response, upload_obj.password)
+
+    def test_file_upload_creates_db_entry_properly(self):
+        """
+        Submit a form to the /upload endpoint and check if DB is properly populated.
+        """
+
+        video_file = SimpleUploadedFile(
+            "jfk_evidence.mp4", b"...", content_type="video/mp4"
+        )
+
+        self.client.force_login(self.test_user)
+        response = self.client.post(
+            reverse("upload-form"), {"upload_type": "file_upload", "file": video_file}
+        )
+        upload_obj = response.context["upload"]
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, "Password"
+        )  # This implicitly checks for HTTP 200, BTW...
 
         # Ensure rendered form contains the generated password.
         self.assertContains(response, upload_obj.password)
@@ -107,3 +132,16 @@ class UploadViewTests(TestCase):
 
         response = self.client.get(reverse("upload-access", args=[upload_obj.id]))
         self.assertEqual(response.status_code, 404)
+
+    def test_file_served_properly(self):
+        upload_obj = create_file_upload()
+        response = self.client.post(
+            reverse("upload-access", args=[upload_obj.id]),
+            {"password": upload_obj.password},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.has_header("Content-Disposition"))
+
+        upload_obj.refresh_from_db()
+        self.assertEqual(upload_obj.successful_attempts, 1)
